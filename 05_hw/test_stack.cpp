@@ -123,16 +123,16 @@ static void test_getTop() {
     assert(getTop(&s) == nullptr);
 
     push(&s, 42);
-    Node *t1 = getTop(&s);
+    const Node *t1 = getTop(&s);
     assert(t1 != nullptr && t1->data == 42);
 
     push(&s, 84);
-    Node *t2 = getTop(&s);
+    const Node *t2 = getTop(&s);
     assert(t2 != nullptr && t2->data == 84);
     assert(t2 != t1);
 
     pop(&s);
-    Node *t3 = getTop(&s);
+    const Node *t3 = getTop(&s);
     assert(t3 != nullptr && t3->data == 42);
 
     destroyStack(&s);
@@ -172,15 +172,15 @@ static void test_searchByValue() {
     push(&s, 4);
     push(&s, 5);
 
-    Node *n_top = searchByValue(&s, 5);
+    const Node *n_top = searchByValue(&s, 5);
     assert(n_top != nullptr);
     assert(n_top->data == 5);
     assert(n_top == getTop(&s));
 
-    Node *n_mid = searchByValue(&s, 4);
+    const Node *n_mid = searchByValue(&s, 4);
     assert(n_mid != nullptr && n_mid->data == 4);
 
-    Node *n_bot = searchByValue(&s, 3);
+    const Node *n_bot = searchByValue(&s, 3);
     assert(n_bot != nullptr && n_bot->data == 3);
 
     assert(searchByValue(&s, 42) == nullptr);
@@ -201,13 +201,13 @@ static void test_searchByIndex() {
     }
     assert(count_nodes(&s) == 5);
 
-    Node *n0 = searchByIndex(&s, 0);
+    const Node *n0 = searchByIndex(&s, 0);
     assert(n0 != nullptr && n0->data == 5);
 
-    Node *n2 = searchByIndex(&s, 2);
+    const Node *n2 = searchByIndex(&s, 2);
     assert(n2 != nullptr && n2->data == 3);
 
-    Node *n4 = searchByIndex(&s, 4);
+    const Node *n4 = searchByIndex(&s, 4);
     assert(n4 != nullptr && n4->data == 1);
 
     assert(searchByIndex(&s, -1) == nullptr);
@@ -217,7 +217,7 @@ static void test_searchByIndex() {
     pop(&s);
     pop(&s);
     assert(count_nodes(&s) == 3);
-    Node *after_pop_index1 = searchByIndex(&s, 1);
+    const Node *after_pop_index1 = searchByIndex(&s, 1);
     assert(after_pop_index1 != nullptr && after_pop_index1->data == 2);
 
     destroyStack(&s);
