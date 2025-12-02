@@ -17,6 +17,19 @@ if(ENABLE_COVERAGE)
     endif()
 endif()
 
+# Опция для включения санитайзеров
+option(ENABLE_SANITIZERS "Enable sanitizers" OFF)
+
+if(ENABLE_SANITIZERS)
+    if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+        message(STATUS "Sanitizers enabled")
+        set(SANITIZER_FLAGS "-fsanitize=address -fsanitize=undefined -fno-omit-frame-pointer -g")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZER_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZER_FLAGS}")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${SANITIZER_FLAGS}")
+    endif()
+endif()
+
 add_library(stack STATIC stack.c)
 add_executable(main main.c)
 target_link_libraries(main stack)
