@@ -99,8 +99,9 @@ jobs:
         run: ./build/test_stack
 
       - name: Generate coverage report
+        continue-on-error: true
         working-directory: 05_hw/build
         run: |
           lcov --capture --directory . --output-file coverage.info
           lcov --remove coverage.info '/usr/*' --output-file coverage.info
-          lcov --list coverage.info || true
+          lcov --list coverage.info
