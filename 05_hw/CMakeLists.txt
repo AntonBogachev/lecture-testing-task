@@ -37,3 +37,7 @@ target_link_libraries(main stack)
 # Добавляем исполняемый файл для тестирования
 add_executable(test_stack test_stack.cpp)
 target_link_libraries(test_stack PRIVATE stack)
+
+# Добавляем исполняемый файл для бенчмарков
+add_executable(benchmark benchmark.cpp)
+target_link_libraries(benchmark PRIVATE stack)
