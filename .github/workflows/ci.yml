@@ -1,0 +1,104 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ clang cppcheck lcov
+
+      - name: Build project
+        working-directory: 05_hw
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+
+      - name: Run tests
+        working-directory: 05_hw
+        run: ./build/test_stack
+
+      - name: Run benchmarks
+        working-directory: 05_hw
+        run: ./build/benchmark
+
+  static-analysis:
+    name: Static Analysis (Cppcheck)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Cppcheck
+        run: sudo apt-get install -y cppcheck
+
+      - name: Run Cppcheck
+        working-directory: 05_hw
+        run: |
+          cppcheck --enable=all --inconclusive --error-exitcode=1 \
+            --suppress=missingIncludeSystem stack.c stack.h
+
+  sanitizers:
+    name: Tests with Sanitizers
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake clang
+
+      - name: Build with sanitizers
+        working-directory: 05_hw
+        run: |
+          cmake -S . -B build \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
+            -DENABLE_SANITIZERS=ON
+          cmake --build build
+
+      - name: Run tests with sanitizers
+        working-directory: 05_hw
+        run: ./build/test_stack
+
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake g++ lcov
+
+      - name: Build with coverage
+        working-directory: 05_hw
+        run: |
+          cmake -S . -B build -DENABLE_COVERAGE=ON
+          cmake --build build
+
+      - name: Run tests
+        working-directory: 05_hw
+        run: ./build/test_stack
+
+      - name: Generate coverage report
+        working-directory: 05_hw/build
+        run: |
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info
+          lcov --list coverage.info
